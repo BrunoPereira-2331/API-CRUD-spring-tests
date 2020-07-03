@@ -2,10 +2,8 @@ package com.bruno.api.resources;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -185,6 +183,7 @@ public class UserControllerTest {
 		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(USER_URI + "/" + id + "/posts")
 				.accept(MediaType.APPLICATION_JSON);
 		
-		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty());
 	}
 }
