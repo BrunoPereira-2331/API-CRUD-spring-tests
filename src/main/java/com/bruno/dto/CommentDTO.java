@@ -17,7 +17,6 @@ public class CommentDTO implements Serializable {
 	private AuthorDTO authorDto;
 
 	public CommentDTO() {
-		super();
 	}
 
 	public CommentDTO(String text, Date date, AuthorDTO authorDto) {

@@ -1,9 +1,5 @@
 package com.bruno.api.resources;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.Mockito.mock;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +21,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.bruno.api.resources.util.URL;
 import com.bruno.api.services.PostService;
+import com.bruno.api.services.exceptions.ObjectNotFoundException;
 import com.bruno.domain.model.Post;
 import com.bruno.dto.AuthorDTO;
 
@@ -46,10 +42,7 @@ public class PostControllerTest {
 
 	@Test
 	@DisplayName("Deve retornar um post")
-	public void findPostTest() throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		// DateFormat date = DateFormat.getDateInstance();
-
+	public void findByIdTest() throws Exception {
 		String id = "abc";
 
 		AuthorDTO author = new AuthorDTO();
@@ -70,7 +63,7 @@ public class PostControllerTest {
 	}
 	
 	@Test
-	@DisplayName("Dado um titulo deve retornar uma lista de post")
+	@DisplayName("Dado um titulo deve retornar uma lista de posts")
 	public void findByTitleTest() throws Exception {
 		String text = "Bom%20Dia";
 		String id = "abc";
@@ -89,6 +82,43 @@ public class PostControllerTest {
 		
 		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty());
+	}
+	
+	@Test
+	@DisplayName("Dado um texto, data minima & data maxima deve retornar uma lista de posts")
+	public void fullSearchTest() throws Exception {
+		String id = "abc";
+		String text = "Bom%20Dia";
+		String minDate = "2020-01-10";
+		String maxDate = "2020-02-10";
+		
+		AuthorDTO author = new AuthorDTO();
+		author.setId(id);
+		author.setName("bruno");
+		
+		List<Post> posts = new ArrayList<>();
+		posts.add(Post.builder().id(id).date(new Date()).title("Bom Dia").body("tchau").author(author).build());
+		posts.add(Post.builder().id(id).date(new Date()).title("Boa noite").body("tchau dnv").author(author).build());
+		
+		BDDMockito.when(postService.fullSearch(Mockito.anyString(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(posts);
+
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(POST_URI + "/fullsearch?" + text + "&minDate=" + minDate + "&maxDate=" + maxDate).accept(MediaType.APPLICATION_JSON);
+	
+		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty())
+			.andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty());
+	}
+	
+	@Test
+	@DisplayName("Deve retornar exception ao passar um id invalido para buscar um post")
+	public void findByIdInvalid() throws Exception {
+		String id = "";
+		
+		BDDMockito.when(postService.findById(id)).thenThrow(ObjectNotFoundException.class);
+		
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(POST_URI + "/" + id).accept(MediaType.APPLICATION_JSON);
+		
+		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isNotFound());
+		
 	}
 	
 }

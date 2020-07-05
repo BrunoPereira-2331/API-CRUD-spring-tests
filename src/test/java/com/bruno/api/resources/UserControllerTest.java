@@ -48,7 +48,7 @@ public class UserControllerTest {
 
 	@Test
 	@DisplayName("Deve retornar um usuario")
-	public void findUserTest() throws Exception {
+	public void findByIdTest() throws Exception {
 		String id = "asdasdsaasd";
 		User user = User.builder().id(id).name("Bruno").email("bruno@gmail.com").build();
 

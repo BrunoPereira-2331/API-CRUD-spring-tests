@@ -18,7 +18,6 @@ public class StandardError implements Serializable {
 	private String path;
 
 	public StandardError() {
-		super();
 	}
 
 	public StandardError(Long timestamp, Integer status, String error, String message, String path) {
