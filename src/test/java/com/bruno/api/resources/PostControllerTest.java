@@ -102,7 +102,7 @@ public class PostControllerTest {
 		
 		BDDMockito.when(postService.fullSearch(Mockito.anyString(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(posts);
 
-		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(POST_URI + "/fullsearch?" + text + "&minDate=" + minDate + "&maxDate=" + maxDate).accept(MediaType.APPLICATION_JSON);
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(POST_URI + "/fullsearch?text=" + text + "&minDate=" + minDate + "&maxDate=" + maxDate).accept(MediaType.APPLICATION_JSON);
 	
 		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty())
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty());
@@ -120,5 +120,7 @@ public class PostControllerTest {
 		mvc.perform(request).andExpect(MockMvcResultMatchers.status().isNotFound());
 		
 	}
+	
+	
 	
 }

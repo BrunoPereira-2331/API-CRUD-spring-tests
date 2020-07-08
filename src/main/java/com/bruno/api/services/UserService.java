@@ -1,7 +1,6 @@
 package com.bruno.api.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,12 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	public UserService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
 	public User findById(String id) {
-		Optional<User> obj = userRepository.findById(id);
 		return userRepository.findById(id).orElseThrow(
 				() -> new ObjectNotFoundException("Object Not Found, id:" + id + ", Type:" + User.class.getName()));
 	}
